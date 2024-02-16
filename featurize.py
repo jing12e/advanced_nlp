@@ -5,12 +5,12 @@ import spacy
 from tqdm import tqdm
 silent = False
 
-
+#todo: Full constituent starting from a head word, Morphological features, Named entities
 def preprocess(text):
     nlp = spacy.load("en_core_web_sm")
     doc = nlp(text)
     processed_features = []
-    for token in doc:
+    for i,token in enumerate(doc):
         path_length = 0
         current_token = token
         while current_token.dep_ != 'ROOT':
@@ -27,7 +27,10 @@ def preprocess(text):
             "STOP": token.is_stop,
             "HEAD": token.head.text,
             "CHILD": [child.text for child in token.children],
-            "PATH_LEN": path_length
+            "PATH_LEN": path_length,
+            "ENT": token.ent_iob_ + token.ent_type_,
+            "PREV_POS" : doc[i-1].pos_ if i > 0 else '',
+            "PREV_DEP" : doc[i-1].dep_ if i > 0 else ''
         })
     return processed_features
 
@@ -35,4 +38,4 @@ training_string = """The sun rose slowly over the horizon, casting its golden gl
 training_features = training_string
 training_features = preprocess(training_features)
 print(training_features)
-#print(f"training features:\n{[(token['HEAD'],token['CHILD'],token['PATH_LEN']) for token in training_features]}")
+#print(f"training features:\n{[(token['HEAD'],token['CHILD'],token['PATH_LEN'],token['ENT']) for token in training_features]}")
