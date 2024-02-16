@@ -10,3 +10,30 @@ implement.py include features of tokenization, POS taggings, segment and depende
 How to run implement.py
 - install spaCy
 - input the text you want to implement in the end of python file
+
+
+How to run featurize.py
+
+To run the featurize.py, you need to download the `en_core_web_sm` model from spaCy. This can be done using the following command:
+
+```
+python -m spacy download en_core_web_sm
+```
+
+Usage
+
+1. Ensure all dependencies are installed and the required spaCy model is downloaded.
+
+- scikit-learn
+- numpy
+- spaCy
+- tqdm
+- matplotlib
+
+2. The script can be via command line or terminal with optional arguments. Example:
+
+```
+python featurize.py --eval_num=10
+```
+
+- `--eval_num` specifies how many tokens to print features for and defaults to 10.
