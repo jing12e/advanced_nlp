@@ -12,7 +12,8 @@ How to run implement.py
 - input the text you want to implement in the end of python file
 
 
-How to run featurize.py
+How to run featurize.py.
+
 Features included in featurized.py:
 "Token, Lemma, POS Tag, Dependency, Shape, Is Alphanumeric?, is Stopword?, Token Head, Token Child, Path Length, Previous POS, Previous dependency, Constituent tree, Morphological features" 
 To run the featurize.py, you need to download the `en_core_web_sm` model from spaCy. This can be done using the following command:
