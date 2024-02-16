@@ -30,7 +30,7 @@ Usage
 - tqdm
 - matplotlib
 
-2. The script can be via command line or terminal with optional arguments. Example:
+2. The script can be run via command line or terminal with optional arguments. Example:
 
 ```
 python featurize.py --eval_num=10
