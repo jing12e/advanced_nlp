@@ -4,9 +4,8 @@ import numpy as np
 import spacy
 from tqdm import tqdm
 import matplotlib.pyplot as plt
-silent = False
+import argparse
 
-#todo:  Morphological features
 def preprocess(text):
     nlp = spacy.load("en_core_web_sm")
     doc = nlp(text)
@@ -52,10 +51,19 @@ def visualize(txt, n, plot_list=['POS', 'PATH_LEN', 'STOP', 'SHAPE']):
             current_plot += 1
     plt.tight_layout(pad=5.0)
     plt.show()
+    
+def process_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--eval_num', type=int,
+                        default=10,
+                        help="Number of tokens to display for each feature")
 
+    return parser.parse_args()
+
+args = process_args()
 training_string = """The sun rose slowly over the horizon, casting its golden glow across the tranquil landscape. Birds chirped melodiously, welcoming the new day with their joyful songs. In the distance, a gentle breeze rustled through the leaves of the trees, carrying with it the promise of adventure."""
 training_features = training_string
 training_features,chunks = preprocess(training_features)
 
 
-visualize(training_features, 10)
+visualize(training_features, args.eval_num)
