@@ -8,5 +8,5 @@ How to run minumum_complete_tree.ipynb
 
 implement.py include features of tokenization, POS taggings, segment and dependency parse
 How to run implement.py
-install spaCy
-input the text you want to implement in the end of python file
+- install spaCy
+- input the text you want to implement in the end of python file
