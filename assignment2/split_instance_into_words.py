@@ -12,6 +12,7 @@ def split_instance_into_words(instance):
     lemmas = ast.literal_eval(instance['lemma'])
     ners = ast.literal_eval(instance['ner'])
     poss = ast.literal_eval(instance['pos'])
+    path_len = ast.literal_eval(instance['path_len'])
     pos_heads = ast.literal_eval(instance['pos_head'])
     dependency_labels = ast.literal_eval(instance['dependency_label'])
     next_lemmas = ast.literal_eval(instance['next_lemma'])
@@ -23,6 +24,7 @@ def split_instance_into_words(instance):
     for i in range(len(tokens)):
         word_instance = {
             'word': tokens[i],
+            'path_len':path_len[i],
             'predicate': predicates if i == int(predicate_positions) - 1 else None,
             'predicate_position': predicate_positions,
             'argument': arguments[i],
@@ -60,8 +62,8 @@ instance = {
 }
 
 #glove = load_glove('glove.6B.300d.txt')
-words_instances = split_instance_into_words(instance)
-for word_instance in words_instances:
-    print(word_instance)
+#words_instances = split_instance_into_words(instance)
+#for word_instance in words_instances:
+#    print(word_instance)
 
 

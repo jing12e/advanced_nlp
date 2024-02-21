@@ -57,6 +57,7 @@ def generate_instances(sentences):
 
 
             word_instances = split_instance_into_words({
+                'path_len': str(features_df['path_len'].tolist()),
                 "word": str(tokens),
                 "predicate": predicate,
                 "predicate_position": predicate_position,
