@@ -5,20 +5,20 @@ from feature_extract import load_glove, map_embedding
 def split_instance_into_words(instance):
     words_instances = []
 
-    tokens = ast.literal_eval(instance['word'])
+    tokens = instance['word']
     predicates = instance['predicate']
     predicate_positions = instance['predicate_position']
-    arguments = ast.literal_eval(instance['arguments'])
-    lemmas = ast.literal_eval(instance['lemma'])
-    ners = ast.literal_eval(instance['ner'])
-    poss = ast.literal_eval(instance['pos'])
-    path_len = ast.literal_eval(instance['path_len'])
-    pos_heads = ast.literal_eval(instance['pos_head'])
-    dependency_labels = ast.literal_eval(instance['dependency_label'])
-    next_lemmas = ast.literal_eval(instance['next_lemma'])
-    previous_lemmas = ast.literal_eval(instance['previous_lemma'])
-    suffix_3 = ast.literal_eval(instance['suffix_3'])
-    suffix_2 = ast.literal_eval(instance['suffix_2'])
+    arguments = instance['arguments']
+    lemmas = instance['lemma']
+    ners = instance['ner']
+    poss = instance['pos']
+    path_len = instance['path_len']
+    pos_heads = instance['pos_head']
+    dependency_labels = instance['dependency_label']
+    next_lemmas = instance['next_lemma']
+    previous_lemmas = instance['previous_lemma']
+    suffix_3 = instance['suffix_3']
+    suffix_2 = instance['suffix_2']
 
 
     for i in range(len(tokens)):
