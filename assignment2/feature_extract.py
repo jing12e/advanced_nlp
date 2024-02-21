@@ -22,9 +22,8 @@ def map_embedding(glove, word):
     else: #Out-of-vocab all zeros
         return np.zeros_like(np.array(glove['the']))
 
-def extract_features(text):
+def extract_features(text, glove):
     doc = nlp(text)
-    glove = load_glove('glove.6B.300d.txt')
     features_list = []
 
     for token in doc:
@@ -97,7 +96,9 @@ def extract_features(text):
 
 
 # Example usage
+glove = load_glove('glove.6B.300d.txt')
+
 text = "Al-Zaman : American forces killed Shaikh Abdullah al-Ani, the preacher at the mosque in the town of 0aim, near the Syrian border. "
-features_df = extract_features(text)
+features_df = extract_features(text, glove)
 print(features_df)
 print(features_df['suffix_3'].tolist())
