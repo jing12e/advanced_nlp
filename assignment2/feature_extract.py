@@ -1,18 +1,40 @@
 import spacy
 import pandas as pd
 from nltk.corpus import wordnet as wn
+import numpy as np
 
 nlp = spacy.load('en_core_web_md')
+
+def load_glove(path):
+    """
+    Loads GloVe model of size --glove_dimension from directory.
+    """
+    with open(path, encoding = "utf-8") as f:
+        lines = f.readlines()
+    return {line.split()[0]:np.asarray(line.split()[1:]).astype(float) for line in lines}
+
+def map_embedding(glove, word):
+    """
+    Maps a GloVe embedding to an input word
+    """
+    if word in glove:    
+        return glove[word.lower()]
+    else: #Out-of-vocab all zeros
+        return np.zeros_like(np.array(glove['the']))
+
 def extract_features(text):
     doc = nlp(text)
-
+    glove = load_glove('glove.6B.300d.txt')
     features_list = []
 
     for token in doc:
         feature = {}
+        
+
+        
 
         # Word and lemma
-        feature['word'] = token.text
+        feature['word'] = map_embedding(glove,token.text)
         feature['lemma'] = token.lemma_
 
         # Named entity recognition (NER)
