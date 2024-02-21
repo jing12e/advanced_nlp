@@ -1,5 +1,8 @@
 import ast
-def split_instance_into_words(instance):
+from feature_extract import load_glove, map_embedding
+
+
+def split_instance_into_words(instance, glove):
     words_instances = []
 
     tokens = ast.literal_eval(instance['word'])
@@ -56,7 +59,8 @@ instance = {
     "hypernym": "['None', 'None', nan, 'change', 'None', 'None', 'None']"
 }
 
-words_instances = split_instance_into_words(instance)
+glove = load_glove('glove.6B.300d.txt')
+words_instances = split_instance_into_words(instance, glove)
 for word_instance in words_instances:
     print(word_instance)
 
