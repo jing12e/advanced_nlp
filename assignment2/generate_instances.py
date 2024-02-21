@@ -1,5 +1,7 @@
 import json
 import feature_extract
+from split_instance_into_words import split_instance_into_words
+import pandas as pd
 def extract_data_from_conll_extended(conll_file):
     sentences = []
     with open(conll_file, 'r', encoding='utf-8') as file:
@@ -54,23 +56,26 @@ def generate_instances(sentences):
             features_df = feature_extract.extract_features(text)
 
 
-            instance = {
-                "word": tokens,
+            word_instances = split_instance_into_words({
+                "word": str(tokens),
                 "predicate": predicate,
                 "predicate_position": predicate_position,
-                "arguments": arguments,
-                "lemma": features_df['lemma'].tolist(),
-                "ner": features_df['ner'].tolist(),
-                "pos": features_df['pos'].tolist(),
-                "pos_head": features_df['pos_head'].tolist(),
-                "dependency_label": features_df['dependency_label'].tolist(),
-                "next_lemma": features_df['next_lemma'].tolist(),
-                "previous_lemma": features_df['previous_lemma'].tolist(),
-                "suffix_3": features_df['suffix_3'].tolist(),
-                "suffix_2": features_df['suffix_2'].tolist(),
-                "hypernym": features_df['hypernym'].tolist()
-            }
-            instances.append(instance)
+                "arguments": str(arguments),
+                "lemma": str(features_df['lemma'].tolist()),
+                "ner": str(features_df['ner'].tolist()),
+                "pos": str(features_df['pos'].tolist()),
+                "pos_head": str(features_df['pos_head'].tolist()),
+                "dependency_label": str(features_df['dependency_label'].tolist()),
+
+                "next_lemma": str(features_df['next_lemma'].tolist()),
+                "previous_lemma": str(features_df['previous_lemma'].tolist()),
+
+                "suffix_3": str(features_df['suffix_3'].tolist()),
+                "suffix_2": str(features_df['suffix_2'].tolist()),
+                "hypernym": str(features_df['hypernym'].tolist())
+            })
+
+            instances.extend(word_instances)
 
     return instances
 
@@ -81,9 +86,20 @@ data_file = "../data/en_ewt-up-test.conllu"
 sentences = extract_data_from_conll_extended(data_file)
 instances = generate_instances(sentences)
 
-# Save instances as JSON file
+
+# Save instances
 output_file = "test_dataset.json"
 with open(output_file, 'w', encoding='utf-8') as f:
     json.dump(instances, f, ensure_ascii=False, indent=4)
 
 print("Instances saved to", output_file)
+
+with open('test_dataset.json', 'r', encoding='utf-8') as f:
+    data = json.load(f)
+
+
+df = pd.DataFrame(data)
+print(df)
+output_file_csv = "test_dataset.csv"
+df.to_csv(output_file_csv, index=False)
+print("Instances saved to", output_file_csv)
