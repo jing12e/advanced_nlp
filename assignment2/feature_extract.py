@@ -30,8 +30,13 @@ def extract_features(text):
     for token in doc:
         feature = {}
         
-
-        
+        # Path length
+        path_length = 0
+        current_token = token
+        while current_token.dep_ != 'ROOT':
+            current_token = current_token.head
+            path_length += 1
+        feature['path_len'] = path_length
 
         # Word and lemma
         feature['word'] = map_embedding(glove,token.text)
