@@ -1,12 +1,4 @@
 import ast
-import pandas as pd
-import pickle
-
-def picklify(pickle_file,not_so_pickle):
-    with open(pickle_file, 'wb') as p:
-        pickle.dump(not_so_pickle, p)
-
-
 def split_instance_into_words(instance):
     words_instances = []
 
@@ -63,11 +55,9 @@ instance = {
     "suffix_2": "['at', 'None', 'le', 'ed', 'to', 'OS', 'None']",
     "hypernym": "['None', 'None', nan, 'change', 'None', 'None', 'None']"
 }
-instances = pd.read_csv('test_dataset.csv')
-results = []
-for i, instance in instances.iterrows():
-    results.append(dict(instance))
-picklify('test_dataset_by_words.pickle',results)
 
+words_instances = split_instance_into_words(instance)
+for word_instance in words_instances:
+    print(word_instance)
 
 
