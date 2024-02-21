@@ -2,7 +2,7 @@ import ast
 from feature_extract import load_glove, map_embedding
 
 
-def split_instance_into_words(instance, glove):
+def split_instance_into_words(instance):
     words_instances = []
 
     tokens = ast.literal_eval(instance['word'])
@@ -23,7 +23,7 @@ def split_instance_into_words(instance, glove):
     for i in range(len(tokens)):
         word_instance = {
             'word': tokens[i],
-            'predicate': predicates,
+            'predicate': predicates if i == int(predicate_positions) - 1 else None,
             'predicate_position': predicate_positions,
             'argument': arguments[i],
             'lemma': lemmas[i],
@@ -59,8 +59,8 @@ instance = {
     "hypernym": "['None', 'None', nan, 'change', 'None', 'None', 'None']"
 }
 
-glove = load_glove('glove.6B.300d.txt')
-words_instances = split_instance_into_words(instance, glove)
+#glove = load_glove('glove.6B.300d.txt')
+words_instances = split_instance_into_words(instance)
 for word_instance in words_instances:
     print(word_instance)
 
