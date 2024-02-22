@@ -104,7 +104,9 @@ dict_vec = DictVectorizer()
 for column in x_train.columns[1:]:
     if column not in skiplist:
         encoded_x_train.append(encode(encoder_dict[column], x_train[column].values))
-    if column in ['lemma']:
+    if column == 'path_len':
+        pass
+        #encoded_x_train.append(x_train['path_len'])
 
         pass
     elif column in ['next_lemma', 'previous_lemma']:
@@ -116,16 +118,21 @@ print(f'### Populating Generator folder ###\n')
 if not args.load:
     for i in tqdm(range(100)):
         picklify(f'generator_folder/x_train_{i}.pickle',x_train[int(len(x_train)/100)*(i-1):int(len(x_train)/100)*i])
-        picklify(f'generator_folder/y_train_{i}.pickle',y_train[int(len(x_train)/100)*(i-1):int(len(x_train)/100)*i])
-x_train, y_train = 0, 0
+x_train = 0
 model = create_classifier()
 
 print(f'### Training LogReg Model ###\n')
 for i in tqdm(range(100)):
-    x_train, y_train = np.array(unpicklify(f'generator_folder/x_train_{i}.pickle')), np.array(unpicklify(f'generator_folder/y_train_{i}.pickle'))
+    x_train = np.array(unpicklify(f'generator_folder/x_train_{i}.pickle'))
+    y_train = y_train[int(len(x_train)/100)*(i-1):int(len(x_train)/100)*i]
+    
     if len(x_train) > 5:
+            #print(type(x_train[0]), type(y_train[0]))
+            #y_train = np.array([np.fromstring(sample.replace('[', '').replace(']', '').replace('\n', ''), sep=' ') for sample in y_train])
+            
         model = fit_classifier(x_train,y_train,model)
         picklify('logreg.pickle',model)
+
 
 
 
