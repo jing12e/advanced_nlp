@@ -4,6 +4,23 @@ import pandas as pd
 import numpy as np
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.feature_extraction import DictVectorizer
+from sklearn.metrics import classification_report, confusion_matrix
+import pickle
+
+def load_model(pickle):
+    '''
+    Input: string name with .pickle extension. Must be present in working directory. Check with 'pwd' command
+    Loads pretrained model variable from pickle file at filepath(pickle).
+    '''
+    with open(pickle, 'rb') as p:
+        return pickle.load(p)
+
+def picklify(pickles,not_so_pickles):
+    '''
+    Saves a model or variable to a pickle file 
+    '''
+    with open(pickles, 'wb') as p:
+        pickle.dump(not_so_pickles, p)
 
 def fit_encoder(data, encoder=None):
     data = data.reshape(-1, 1)
@@ -51,8 +68,9 @@ def inference(model, x_test, output_file):
     return predictions
 
 def evaluate(predictions, true_y):
-    pass
-    # some evaluation
+    report = classification_report(true_y, predictions, output_dict=True)
+    conf_matrix = confusion_matrix(true_y, predictions)
+    
 
 
 # Example usage:
@@ -90,5 +108,7 @@ x_test_encoded = np.concatenate(encoded_x_test, axis=1)
 y_test = y_test['argument']
 
 predictions = inference(model, x_test_encoded, args.output_file)
+
+picklify(model)
 
 evaluate(predictions, y_test)
