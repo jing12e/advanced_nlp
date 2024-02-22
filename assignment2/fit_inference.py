@@ -58,21 +58,21 @@ def evaluate(predictions, true_y):
 # Example usage:
 args = process_args()
 x_train, y_train = pd.read_csv(args.x_train), pd.read_csv(args.y_train)
-skiplist = ['word','predicate', 'next_lemma','previous_lemma', 'lemma','path_len']
+skiplist = ['word','predicate_position', 'next_lemma','previous_lemma', 'lemma','path_len']
+t = x_train.at[0,'predicate']
+
+x_train['predicate'] = pd.Series([1 if isinstance(pred, str) else 0 for pred in x_train['predicate']])
+
 encoder_dict = {feature: fit_encoder(x_train[feature].values) for feature in x_train.columns[1:] if feature not in skiplist}
 encoded_x_train = []
 dict_vec = DictVectorizer()
 for column in x_train.columns[1:]:
     if column not in skiplist:
-        print(x_train[column])
-        print(len(x_train[column].unique()))
         encoded_x_train.append(encode(encoder_dict[column], x_train[column].values))
     if column in ['lemma']:
-        #encoded_x_train.append(dict_vec.fit_transform(x_train[column].values.reshape(-1,1)))
-        #dict_vec.fit_transform(x_train[column].values)
+
         pass
     elif column in ['next_lemma', 'previous_lemma']:
-        #dict_vec.transform(x_train[column].values)
         pass
         
 x_train_encoded = np.concatenate(encoded_x_train, axis=1)
