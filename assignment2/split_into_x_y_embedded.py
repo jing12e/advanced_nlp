@@ -5,8 +5,6 @@ import argparse
 def process_args():
     """
     Processes user arguments from the command prompt. 
-    Example usage:
-    python NER3.py --load_features_from_file=0 --modelname=LSTM --use_embedding=1
     """
     parser = argparse.ArgumentParser()
     parser.add_argument('--input_file', type=str, 
