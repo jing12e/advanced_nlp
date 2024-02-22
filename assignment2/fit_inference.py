@@ -28,12 +28,18 @@ def process_args():
 
 
 def create_classifier(x_train, y_train):
+    """
+    Returns a trained classifier (logistic regression)
+    """
     model = LogisticRegression(max_iter=1000) #can remove max_iter if the model converges properly
     x_train, y_train = x_train.to_dict(orient='records'), y_train.to_dict(orient='records') 
     model.fit(x_train, y_train)
     return model
 
 def inference(model, x_test, y_test, output_file):
+    """
+    Write the model's prediction on x_test to output_file and returns the result
+    """
     predictions = model.predict(x_test)
     with open(output_file, 'w') as file:
         [file.write(f"{prediction}\n") for prediction in predictions]
