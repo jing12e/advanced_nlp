@@ -3,6 +3,7 @@ import argparse
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import OneHotEncoder
+from sklearn.feature_extraction import DictVectorizer
 
 def fit_encoder(data, encoder=None):
     data = data.reshape(-1, 1)
@@ -18,11 +19,11 @@ def encode(encoder, data):
 def process_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--x_train', type=str,
-                        default='training_dataset_x.csv',
+                        default='train_dataset_x.csv',
                         help="Input the relative path in the folder to the csv containing featurizes for the training set")
 
     parser.add_argument('--y_train', type=str,
-                        default='training_dataset_y.csv',
+                        default='train_dataset_y.csv',
                         help="Input the relative path in the folder to the csv containing the y labels for the training set")
 
     parser.add_argument('--x_test', type=str,
@@ -58,11 +59,17 @@ def evaluate(predictions, true_y):
 args = process_args()
 x_train, y_train = pd.read_csv(args.x_train), pd.read_csv(args.y_train)
 
-encoder_dict = {feature: fit_encoder(x_train[feature].values) for feature in x_train.columns[1:] if feature not in ['word', 'path_len']}
+encoder_dict = {feature: fit_encoder(x_train[feature].values) for feature in x_train.columns[1:] if feature not in ['word','lemma', 'path_len']}
 encoded_x_train = []
+dict_vec = DictVectorizer()
 for column in x_train.columns[1:]:
-    if column not in ['word', 'path_len']:
+    if column not in ['word', 'lemma','path_len']:
+        print(x_train[column].unique())
         encoded_x_train.append(encode(encoder_dict[column], x_train[column].values))
+    if column == 'lemma':
+        #encoded_x_train.append(dict_vec.fit_transform(x_train[column].values.reshape(-1,1)))
+        pass
+        
 x_train_encoded = np.concatenate(encoded_x_train, axis=1)
 y_train = y_train['argument']
 model = create_classifier(x_train_encoded, y_train)
@@ -71,7 +78,7 @@ model = create_classifier(x_train_encoded, y_train)
 x_test, y_test = pd.read_csv(args.x_test), pd.read_csv(args.y_test)
 encoded_x_test = []
 for column in x_test.columns[1:]:
-    if column not in ['word', 'path_len']:
+    if column not in ['word', 'lemma','path_len']:
         encoded_x_test.append(encode(encoder_dict[column], x_test[column].values))
 
 x_test_encoded = np.concatenate(encoded_x_test, axis=1)
