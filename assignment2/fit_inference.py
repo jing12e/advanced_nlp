@@ -5,19 +5,19 @@ def process_args():
     Processes user arguments from the command prompt. 
     """
     parser = argparse.ArgumentParser()
-    parser.add_argument('--input_x_train', type=str, 
+    parser.add_argument('--x_train', type=str, 
                         default='training_dataset_x.csv',
                         help="Input the relative path in the folder to the csv containing featurizes for the training set")
     
-    parser.add_argument('--input_y_train', type=str, 
+    parser.add_argument('--y_train', type=str, 
                         default='training_dataset_y.csv',
                         help="Input the relative path in the folder to the csv containing the y labels for the training set")
     
-    parser.add_argument('--input_x_test', type=str, 
+    parser.add_argument('--x_test', type=str, 
                         default='test_dataset_x.csv',
                         help="Input the relative path in the folder to the csv containing featurizes for the test set")
     
-    parser.add_argument('--input_y_test', type=str, 
+    parser.add_argument('--y_test', type=str, 
                         default='test_dataset_y.csv',
                         help="Input the relative path in the folder to the csv containing the y labels for the test set")
     
@@ -43,4 +43,8 @@ def evaluate(prediction, true_y):
     pass
     # some evaluation
 
+# Example usage:
+args = proces_args()
+x_train, y_train, x_test, y_test = pd.read_csv(args.x_train), pd.read_csv(args.y_train), pd.read_csv(args.x_test), pd.read_csv(args.y_test)
 model = create_classifier(x_train, y_train)
+inference = mode, (x_test, y_test)
