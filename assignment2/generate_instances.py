@@ -8,6 +8,7 @@ def extract_data_from_conll_extended(conll_file):
         sentence_data = {"tokens": [], "features": [], "predicate_positions": [], "argument_labels": []}
         for line in file:
             line = line.strip()
+
             if line.startswith("#"):
                 if sentence_data["tokens"]:
                     sentences.append(sentence_data.copy())
@@ -83,24 +84,24 @@ def generate_instances(sentences):
 
 
 # Example usage
-data_file = "../data/en_ewt-up-test.conllu"
+data_file = "../data/en_ewt-up-train.conllu"
 sentences = extract_data_from_conll_extended(data_file)
 instances = generate_instances(sentences)
 
 
 # Save instances
-output_file = "test_dataset.json"
+output_file = "train_dataset.json"
 with open(output_file, 'w', encoding='utf-8') as f:
     json.dump(instances, f, ensure_ascii=False, indent=4)
 
 print("Instances saved to", output_file)
 
-with open('test_dataset.json', 'r', encoding='utf-8') as f:
+with open(output_file, 'r', encoding='utf-8') as f:
     data = json.load(f)
 
 
 df = pd.DataFrame(data)
 print(df)
-output_file_csv = "test_dataset.csv"
+output_file_csv = "train_dataset.csv"
 df.to_csv(output_file_csv, index=False)
 print("Instances saved to", output_file_csv)
