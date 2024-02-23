@@ -88,6 +88,9 @@ def process_args():
     parser.add_argument('--dataset', type=str,
                         default="en_ewt-up-train.conllu",
                         help="Name of the file in the data folder")
+    parser.add_argument('--output_file', type=str,
+                        default=""train_dataset.csv"",
+                        help="Name of the processed output file")
     return parser.parse_args()
 
 # Example usage
@@ -110,6 +113,6 @@ with open(output_file, 'r', encoding='utf-8') as f:
 
 df = pd.DataFrame(data)
 print(df)
-output_file_csv = "train_dataset.csv"
+output_file_csv = args.output_file
 df.to_csv(output_file_csv, index=False)
 print("Instances saved to", output_file_csv)
