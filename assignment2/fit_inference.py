@@ -66,6 +66,14 @@ def process_args():
     parser.add_argument('--load', type=bool,
                         default=False,
                         help="Load from generator folder? (needs to be prepopulated)")
+    
+    parser.add_argument('--eval_only', type=bool,
+                        default=False,
+                        help="Only evaluate a the stored model.")
+    
+    parser.add_argument('--load_model', type=bool,
+                        default=False,
+                        help="Load a stored model instead of creating one to train from scratch.")
     return parser.parse_args()
 
 def create_classifier():
@@ -96,14 +104,16 @@ def evaluate(predictions, true_y):
 args = process_args()
 skiplist = ['word','predicate_position', 'next_lemma','previous_lemma', 'lemma','path_len']
 x_train, y_train = pd.read_csv(args.x_train), pd.read_csv(args.y_train) #we have one million words to process. It's too long
+x_train['predicate'] = pd.Series([1 if isinstance(pred, str) else 0 for pred in x_train['predicate']])
 
 if not args.load:
     t = x_train.at[0,'predicate']
     x_train,y_train = x_train, y_train
-    x_train['predicate'] = pd.Series([1 if isinstance(pred, str) else 0 for pred in x_train['predicate']])
 encoder_dict = {feature: fit_encoder(x_train[feature].values) for feature in x_train.columns[1:] if feature not in skiplist}
 encoded_x_train = []
 dict_vec = DictVectorizer()
+norm_factor = x_train['path_len'].max()
+print(norm_factor)
 if not args.load:
     for column in x_train.columns[1:]:
         if column not in skiplist:
@@ -123,18 +133,22 @@ if not args.load:
     for i in tqdm(range(100)):
         picklify(f'generator_folder/x_train_{i}.pickle',x_train[int(len(x_train)/100)*(i-1):int(len(x_train)/100)*i])
 x_train = 0
-model = create_classifier()
-
-print(f'### Training LogReg Model ###\n')
-classes = np.unique(y_train)
-for i in tqdm(range(100)):
-    x_train = np.array(unpicklify(f'generator_folder/x_train_{i}.pickle'))
-    y_train_chunk = y_train[int(len(y_train)/100)*(i-1):int(len(y_train)/100)*i]
+if not args.eval_only:
+    if not args.load_model:
+        model = create_classifier()
+    else:
+        model = load_model('logreg.pickle')
+    print(f'### Training LogReg Model ###\n')
+    classes = np.unique(y_train)
+    for i in tqdm(range(100)):
+        x_train = np.array(unpicklify(f'generator_folder/x_train_{i}.pickle'))
+        y_train_chunk = y_train[int(len(y_train)/100)*(i-1):int(len(y_train)/100)*i]
     
-    if len(x_train) > 5:
-        model = fit_classifier(x_train,y_train_chunk,model, classes)
-        picklify('logreg.pickle',model)
-
+        if len(x_train) > 5:
+            model = fit_classifier(x_train,y_train_chunk,model, classes)
+            picklify('logreg.pickle',model)
+else:
+    model = load_model('logreg.pickle')
 
 
 
