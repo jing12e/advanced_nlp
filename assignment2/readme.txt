@@ -1,9 +1,3 @@
-**README.md**
-
-# Running the Codebase
-
-This README provides a comprehensive guide on how to execute the scripts included in the codebase, which feature a pipeline for processing natural language data, embedding it with GloVe, and then training and evaluating a classification model.
-
 ## Prerequisites
 
 Before running the scripts, ensure you have the following prerequisites installed:
