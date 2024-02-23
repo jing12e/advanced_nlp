@@ -86,13 +86,13 @@ def generate_instances(sentences):
 def process_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--dataset', type=str,
-                        default="../data/en_ewt-up-train.conllu",
-                        help="Relative path to the CoNNLU dataset to process")
+                        default="en_ewt-up-train.conllu",
+                        help="Name of the file in the data folder")
     return parser.parse_args()
 
 # Example usage
 args = process_args()
-data_file = args.dataset
+data_file = f'../data/{args.dataset}'
 sentences = extract_data_from_conll_extended(data_file)
 instances = generate_instances(sentences)
 
