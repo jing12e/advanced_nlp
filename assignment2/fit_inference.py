@@ -97,22 +97,22 @@ skiplist = ['word','predicate_position', 'next_lemma','previous_lemma', 'lemma',
 t = x_train.at[0,'predicate']
 x_train,y_train = x_train, y_train
 x_train['predicate'] = pd.Series([1 if isinstance(pred, str) else 0 for pred in x_train['predicate']])
-
 encoder_dict = {feature: fit_encoder(x_train[feature].values) for feature in x_train.columns[1:] if feature not in skiplist}
 encoded_x_train = []
 dict_vec = DictVectorizer()
+
 for column in x_train.columns[1:]:
     if column not in skiplist:
         encoded_x_train.append(encode(encoder_dict[column], x_train[column].values))
     if column == 'path_len':
-        pass
-        #encoded_x_train.append(x_train['path_len'])
+        path_len = np.array(x_train['path_len']).reshape(-1, 1)
+        norm_factor = max(path_len)
+        encoded_x_train.append(path_len/norm_factor)
 
-        pass
     elif column in ['next_lemma', 'previous_lemma']:
         pass
 
-x_train_encoded = np.concatenate(encoded_x_train, axis=1)
+x_train = np.concatenate(encoded_x_train, axis=1).astype(float)
 y_train = y_train['argument']
 print(f'### Populating Generator folder ###\n')
 if not args.load:
@@ -141,6 +141,9 @@ encoded_x_test = []
 for column in x_test.columns[1:]:
     if column not in skiplist:
         encoded_x_test.append(encode(encoder_dict[column], x_test[column].values))
+    if column == 'path_len':
+        path_len = np.array(x_test['path_len']).reshape(-1, 1)
+        encoded_x_test.append(path_len/norm_factor)
 
 x_test_encoded = np.concatenate(encoded_x_test, axis=1)
 y_test = y_test['argument']
