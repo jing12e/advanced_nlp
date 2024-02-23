@@ -2,6 +2,8 @@ import json
 import feature_extract
 from split_instance_into_words import split_instance_into_words
 import pandas as pd
+import argparse
+
 def extract_data_from_conll_extended(conll_file):
     sentences = []
     with open(conll_file, 'r', encoding='utf-8') as file:
@@ -81,10 +83,16 @@ def generate_instances(sentences):
 
     return instances
 
-
+def process_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--dataset', type=str,
+                        default="../data/en_ewt-up-train.conllu",
+                        help="Relative path to the CoNNLU dataset to process")
+    return parser.parse_args()
 
 # Example usage
-data_file = "../data/en_ewt-up-train.conllu"
+args = process_args()
+data_file = args.dataset
 sentences = extract_data_from_conll_extended(data_file)
 instances = generate_instances(sentences)
 
