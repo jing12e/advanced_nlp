@@ -90,7 +90,8 @@ def fit_classifier(x_train, y_train, model, classes):
 def inference(model, x_test, output_file):
     predictions = model.predict(x_test)
     with open(output_file, 'w') as file:
-        [file.write(f"{prediction}    ") for prediction in predictions]
+        file.write('Prediction')
+        [file.write(f"{prediction}\n") for prediction in predictions]
     return predictions
 
 def evaluate(predictions, true_y):
