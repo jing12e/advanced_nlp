@@ -60,7 +60,7 @@ def process_args():
                         help="Input the relative path in the folder to the csv containing the y labels for the test set")
 
     parser.add_argument('--output_file', type=str,
-                        default='output/inference.txt',
+                        default='output/inference.tsv',
                         help="Input the path of the output files")
     
     parser.add_argument('--load', type=bool,
