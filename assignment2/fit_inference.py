@@ -113,7 +113,6 @@ encoder_dict = {feature: fit_encoder(x_train[feature].values) for feature in x_t
 encoded_x_train = []
 dict_vec = DictVectorizer()
 norm_factor = x_train['path_len'].max()
-print(norm_factor)
 if not args.load:
     for column in x_train.columns[1:]:
         if column not in skiplist:
@@ -128,8 +127,8 @@ if not args.load:
 
     x_train = np.concatenate(encoded_x_train, axis=1).astype(float)
 y_train = y_train['argument']
-print(f'### Populating Generator folder ###\n')
 if not args.load:
+    print(f'### Populating Generator folder ###\n')
     for i in tqdm(range(100)):
         picklify(f'generator_folder/x_train_{i}.pickle',x_train[int(len(x_train)/100)*(i-1):int(len(x_train)/100)*i])
 x_train = 0
