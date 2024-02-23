@@ -124,13 +124,10 @@ model = create_classifier()
 print(f'### Training LogReg Model ###\n')
 for i in tqdm(range(100)):
     x_train = np.array(unpicklify(f'generator_folder/x_train_{i}.pickle'))
-    y_train = y_train[int(len(x_train)/100)*(i-1):int(len(x_train)/100)*i]
+    y_train_chunk = y_train[int(len(y_train)/100)*(i-1):int(len(y_train)/100)*i]
     
     if len(x_train) > 5:
-            #print(type(x_train[0]), type(y_train[0]))
-            #y_train = np.array([np.fromstring(sample.replace('[', '').replace(']', '').replace('\n', ''), sep=' ') for sample in y_train])
-            
-        model = fit_classifier(x_train,y_train,model)
+        model = fit_classifier(x_train,y_train_chunk,model)
         picklify('logreg.pickle',model)
 
 
