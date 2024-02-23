@@ -1,4 +1,4 @@
-from sklearn.linear_model import LogisticRegression
+from sklearn.linear_model import LogisticRegression, SGDClassifier
 import argparse
 import pandas as pd
 import numpy as np
@@ -70,10 +70,12 @@ def process_args():
 
 def create_classifier():
     model = LogisticRegression(max_iter=1000, verbose=True)
+    model = SGDClassifier(loss='log_loss')
+
     return model
 
-def fit_classifier(x_train, y_train, model):
-    return model.partial_fit(x_train, y_train)
+def fit_classifier(x_train, y_train, model, classes):
+    return model.partial_fit(x_train, y_train, classes=classes)
 
     
 
@@ -89,30 +91,32 @@ def evaluate(predictions, true_y):
     print(report)
     print(conf_matrix)
 
-
 # Example usage:
+
 args = process_args()
-x_train, y_train = pd.read_csv(args.x_train), pd.read_csv(args.y_train) #we have one million words to process. It's too long
 skiplist = ['word','predicate_position', 'next_lemma','previous_lemma', 'lemma','path_len']
-t = x_train.at[0,'predicate']
-x_train,y_train = x_train, y_train
-x_train['predicate'] = pd.Series([1 if isinstance(pred, str) else 0 for pred in x_train['predicate']])
+x_train, y_train = pd.read_csv(args.x_train), pd.read_csv(args.y_train) #we have one million words to process. It's too long
+
+if not args.load:
+    t = x_train.at[0,'predicate']
+    x_train,y_train = x_train, y_train
+    x_train['predicate'] = pd.Series([1 if isinstance(pred, str) else 0 for pred in x_train['predicate']])
 encoder_dict = {feature: fit_encoder(x_train[feature].values) for feature in x_train.columns[1:] if feature not in skiplist}
 encoded_x_train = []
 dict_vec = DictVectorizer()
+if not args.load:
+    for column in x_train.columns[1:]:
+        if column not in skiplist:
+            encoded_x_train.append(encode(encoder_dict[column], x_train[column].values))
+        if column == 'path_len':
+            path_len = np.array(x_train['path_len']).reshape(-1, 1)
+            norm_factor = max(path_len)
+            encoded_x_train.append(path_len/norm_factor)
 
-for column in x_train.columns[1:]:
-    if column not in skiplist:
-        encoded_x_train.append(encode(encoder_dict[column], x_train[column].values))
-    if column == 'path_len':
-        path_len = np.array(x_train['path_len']).reshape(-1, 1)
-        norm_factor = max(path_len)
-        encoded_x_train.append(path_len/norm_factor)
+        elif column in ['next_lemma', 'previous_lemma']:
+            pass
 
-    elif column in ['next_lemma', 'previous_lemma']:
-        pass
-
-x_train = np.concatenate(encoded_x_train, axis=1).astype(float)
+    x_train = np.concatenate(encoded_x_train, axis=1).astype(float)
 y_train = y_train['argument']
 print(f'### Populating Generator folder ###\n')
 if not args.load:
@@ -122,12 +126,13 @@ x_train = 0
 model = create_classifier()
 
 print(f'### Training LogReg Model ###\n')
+classes = np.unique(y_train)
 for i in tqdm(range(100)):
     x_train = np.array(unpicklify(f'generator_folder/x_train_{i}.pickle'))
     y_train_chunk = y_train[int(len(y_train)/100)*(i-1):int(len(y_train)/100)*i]
     
     if len(x_train) > 5:
-        model = fit_classifier(x_train,y_train_chunk,model)
+        model = fit_classifier(x_train,y_train_chunk,model, classes)
         picklify('logreg.pickle',model)
 
 
