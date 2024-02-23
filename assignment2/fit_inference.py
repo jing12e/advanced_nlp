@@ -73,7 +73,7 @@ def create_classifier():
     return model
 
 def fit_classifier(x_train, y_train, model):
-    return model.fit(x_train, y_train)
+    return model.partial_fit(x_train, y_train)
 
     
 
