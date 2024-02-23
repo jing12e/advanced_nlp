@@ -24,7 +24,7 @@ python -m nltk.downloader wordnet
 
 ## Setting Up Your Environment
 
-Make sure you have the GloVe embeddings available locally. The code uses 'glove.6B.50d.txt'. You can download GloVe embeddings from [the GloVe website](https://nlp.stanford.edu/projects/glove/).
+Make sure you have the GloVe embeddings available locally. The code uses 'glove.6B.50d.txt'. You can download GloVe embeddings from [the GloVe website](https://nlp.stanford.edu/projects/glove/). It should be placed inside the  `Assignment2` folder.
 
 ## Running the Scripts
 
