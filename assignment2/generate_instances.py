@@ -89,7 +89,7 @@ def process_args():
                         default="en_ewt-up-train.conllu",
                         help="Name of the file in the data folder")
     parser.add_argument('--output_file', type=str,
-                        default=""train_dataset.csv"",
+                        default=""train_dataset"",
                         help="Name of the processed output file")
     return parser.parse_args()
 
@@ -101,7 +101,7 @@ instances = generate_instances(sentences)
 
 
 # Save instances
-output_file = "train_dataset.json"
+output_file = f'{args.output_file}.json'
 with open(output_file, 'w', encoding='utf-8') as f:
     json.dump(instances, f, ensure_ascii=False, indent=4)
 
@@ -113,6 +113,6 @@ with open(output_file, 'r', encoding='utf-8') as f:
 
 df = pd.DataFrame(data)
 print(df)
-output_file_csv = args.output_file
+output_file_csv = f'{args.output_file}.csv'
 df.to_csv(output_file_csv, index=False)
 print("Instances saved to", output_file_csv)
