@@ -35,7 +35,7 @@ def transform_csv(input_file, output_file):
         """
         Maps a GloVe embedding to an input word
         """
-        if word in glove:    
+        if word.lower() in glove:    
             return glove[word.lower()]
         else: #Out-of-vocab all zeros
             return np.zeros_like(np.array(glove['the']))
