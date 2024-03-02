@@ -89,7 +89,7 @@ def process_args():
                         default="en_ewt-up-train.conllu",
                         help="Name of the file in the data folder")
     parser.add_argument('--output_file', type=str,
-                        default=""train_dataset"",
+
                         help="Name of the processed output file")
     return parser.parse_args()
 
