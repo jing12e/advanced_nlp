@@ -67,5 +67,5 @@ def extract_data_from_conll_extended(conll_file, output_csv):
 
 
 
-extract_data_from_conll_extended("../data/en_ewt-up-test.conllu", "test.json")
+#extract_data_from_conll_extended("../data/en_ewt-up-test.conllu", "test.json")
 
