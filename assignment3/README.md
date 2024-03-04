@@ -17,6 +17,8 @@
 ### Advanced Models
 - [link1](http://www.lrec-conf.org/proceedings/lrec2020/pdf/2020.lrec-1.704.pdf)
 - [link2](https://aclanthology.org/P15-1109.pdf)
+![img_4.png](images/img_4.png)
+![img_5.png](images/img_5.png)
 
 ### Evaluation
 
