@@ -22,7 +22,7 @@ def map_embedding(glove, word):
     else: #Out-of-vocab all zeros
         return np.zeros_like(np.array(glove['the']))
 
-def extract_features(text):
+def extract_features_OLD(text):
     doc = nlp(text)
     features_list = []
 
@@ -95,6 +95,80 @@ def extract_features(text):
 
     return pd.DataFrame(features_list)
 
+def extract_features(text):
+    doc = nlp(text)
+    features_list = []
+
+    for token in doc:
+        feature = {}
+
+        # Word and lemma
+        #feature['word'] = map_embedding(glove,token.text)
+        feature['word'] = token.text
+        feature['lemma'] = token.lemma_
+        
+        # Part-of-speech (POS) tagging
+        feature['pos'] = token.pos_
+        
+        # Dependency label
+        feature['basic_dep'] = token.dep_
+        
+        # Head 
+        feature['head'] = token.head
+        
+        # Children 
+        children = []
+        for child in token.children:
+            children.append(child)
+        feature['children'] = children
+        
+        # Predicate subtree
+        if token.pos_ == 'VERB':
+            feature['pred_subtree'] = list(token.subtree)
+        else:
+            feature['pred_subtree'] = None 
+        
+        # shape
+        feature['shape'] = token.shape_
+
+        # Named entity recognition (NER)
+        feature['ner'] = token.ent_type_
+
+        # Next pos
+        if token.i + 1 < len(doc):
+            next_token = doc[token.i + 1]
+            feature['next_pos'] = next_token.lemma_
+        else:
+            feature['next_pos'] = None
+
+        # Previous pos
+        if token.i - 1 >= 0:
+            previous_token = doc[token.i - 1]
+            feature['previous_pos'] = previous_token.lemma_
+        else:
+            feature['previous_pos'] = None
+
+        # suffix
+        if len(token.text) > 3:
+            feature['suffix_3'] = token.text[-3:]
+        else:
+            feature['suffix_3'] = None
+
+        # Semantic features
+        synsets = wn.synsets(token.text)
+        if synsets:
+            first_synset = synsets[0]
+            hypernyms = first_synset.hypernyms()
+            if hypernyms:
+                first_hypernym = hypernyms[0]
+                feature['hypernym'] = first_hypernym.name().split('.')[0]
+        else:
+            feature['hypernym'] = None
+
+        # Append this feature to the list
+        features_list.append(feature)
+
+    return pd.DataFrame(features_list)
 
 # Example usage
 #glove = load_glove('glove.6B.300d.txt')
