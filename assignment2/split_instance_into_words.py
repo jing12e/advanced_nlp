@@ -2,7 +2,7 @@ import ast
 from feature_extract import load_glove, map_embedding
 
 
-def split_instance_into_words(instance):
+def split_instance_into_words_OLD(instance):
     words_instances = []
 
     tokens = instance['word']
@@ -41,7 +41,56 @@ def split_instance_into_words(instance):
         words_instances.append(word_instance)
 
     return words_instances
+    
+def split_instance_into_words(instance):
+    words_instances = []
 
+    tokens = instance['word']
+    predicates = instance['predicate']
+    predicate_positions = instance['predicate_position']
+    arguments = instance['arguments']
+    lemmas = instance['lemma']
+    ners = instance['ner']
+    poss = instance['pos']
+    head = instance['head']
+    children = instance['children']
+    pred_subtree = instance['pred_subtree']
+    shape = instance['shape']
+    #path_len = instance['path_len']
+    #pos_heads = instance['pos_head']
+    basic_dep = instance['basic_dep']
+    next_pos = instance['next_pos']
+    previous_pos = instance['previous_pos']
+    suffix_3 = instance['suffix_3']
+    #suffix_2 = instance['suffix_2']
+    hypernyms = instance['hypernym']
+
+
+    for i in range(len(tokens)):
+        word_instance = {
+            'word': tokens[i],
+            #'path_len':path_len[i],
+            'predicate': predicates if i == int(predicate_positions) - 1 else None,
+            'predicate_position': predicate_positions,
+            'argument': arguments[i],
+            'lemma': lemmas[i],
+            'ner': ners[i],
+            'pos': poss[i],
+            'head': head[i],
+            'children': children[i], 
+            'pred_subtree': pred_subtree[i],
+            'shape': shape[i],
+            #'pos_head': pos_heads[i],
+            'basic_dep': basic_dep[i],
+            'next_pos': next_pos[i],
+            'previous_pos': previous_pos[i],
+            'suffix_3': suffix_3[i],
+            #'suffix_2': suffix_2[i],
+            'hypernym': hypernyms[i]
+        }
+        words_instances.append(word_instance)
+
+    return words_instances
 
 
 instance = {
