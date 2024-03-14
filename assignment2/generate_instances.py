@@ -41,7 +41,7 @@ def extract_data_from_conll_extended(conll_file):
 
     return sentences
 
-def generate_instances(sentences):
+def generate_instances_OLD(sentences):
     instances = []
     for sentence in sentences:
         tokens = sentence["tokens"]
@@ -82,7 +82,50 @@ def generate_instances(sentences):
             instances.extend(word_instances)
 
     return instances
+def generate_instances(sentences):
+    instances = []
+    for sentence in sentences:
+        tokens = sentence["tokens"]
+        predicates = sentence["predicate_positions"]
+        n = 0
+        for predicate_data in predicates:
+            predicate = predicate_data[0]
+            predicate_position = predicate_data[1]
 
+            argument_labels = sentence["argument_labels"]
+            arguments = [labels[n] for labels in argument_labels]
+            n = n + 1
+
+            text = " ".join(tokens)
+            features_df = feature_extract.extract_features(text)
+
+
+            word_instances = split_instance_into_words({
+                #'path_len': features_df['path_len'].tolist(),
+                "word": tokens,
+                "predicate": predicate,
+                "predicate_position": predicate_position,
+                "arguments": arguments,
+                "lemma": features_df['lemma'].tolist(),
+                "ner": features_df['ner'].tolist(),
+                "pos": features_df['pos'].tolist(),
+                #"pos_head": features_df['pos_head'].tolist(),
+                "basic_dep": features_df['basic_dep'].tolist(),
+                "head": features_df['head'].tolist(),
+                "children": features_df['children'].tolist(),
+                "pred_subtree": features_df['pred_subtree'].tolist(),
+                "shape": features_df['shape'].tolist(),
+                "next_pos": features_df['next_pos'].tolist(),
+                "previous_pos": features_df['previous_pos'].tolist(),
+                "suffix_3": features_df['suffix_3'].tolist(),
+                #"suffix_2": features_df['suffix_2'].tolist(),
+                "hypernym": features_df['hypernym'].tolist()
+            })
+
+            instances.extend(word_instances)
+
+    return instances
+    
 def process_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--dataset', type=str,
