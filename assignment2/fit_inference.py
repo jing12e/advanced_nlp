@@ -160,20 +160,29 @@ else:
     model = load_model('logreg.pickle')
 
 
-
 x_test, y_test = pd.read_csv(args.x_test), pd.read_csv(args.y_test)
-encoded_x_test = []
-for column in x_test.columns[1:]:
-    if column not in skiplist:
-        encoded_x_test.append(encode(encoder_dict[column], x_test[column].values))
-    if column == 'path_len':
-        path_len = np.array(x_test['path_len']).reshape(-1, 1)
-        encoded_x_test.append(path_len/norm_factor)
 
-x_test_encoded = np.concatenate(encoded_x_test, axis=1)
+predictions = []
+for i in range(100):
+    encoded_x_test = []
+    xt_chunk = x_test[int(len(x_test)/100)*(i-1):int(len(x_test)/100)*i]
+    yt_chunk = y_test[int(len(y_test)/100)*(i-1):int(len(y_test)/100)*i]
+    if len(xt_chunk)>5:
+        for column in x_test.columns[1:]:
+            if column not in skiplist:
+                encoded_x_test.append(encode(encoder_dict[column], xt_chunk[column].values))
+            if column == 'path_len':
+                path_len = np.array(x_test['path_len']).reshape(-1, 1)
+                encoded_x_test.append(path_len/norm_factor)
+
+        x_test_encoded = np.concatenate(encoded_x_test, axis=1)
+        
+
+
+
+        prediction = inference(model, x_test_encoded, args.output_file)
+        
+        predictions.extend(prediction)
+
 y_test = y_test['argument']
-
-predictions = inference(model, x_test_encoded, args.output_file)
-
-
 evaluate(predictions, y_test)
