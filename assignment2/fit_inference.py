@@ -113,15 +113,15 @@ if not args.load:
 encoder_dict = {feature: fit_encoder(x_train[feature].values) for feature in x_train.columns[1:] if feature not in skiplist}
 encoded_x_train = []
 dict_vec = DictVectorizer()
-norm_factor = x_train['path_len'].max()
+#norm_factor = x_train['path_len'].max()
 if not args.load:
     for column in x_train.columns[1:]:
         if column not in skiplist:
             encoded_x_train.append(encode(encoder_dict[column], x_train[column].values))
-        if column == 'path_len':
-            path_len = np.array(x_train['path_len']).reshape(-1, 1)
-            norm_factor = max(path_len)
-            encoded_x_train.append(path_len/norm_factor)
+ #       if column == 'path_len':
+  #          path_len = np.array(x_train['path_len']).reshape(-1, 1)
+   #         norm_factor = max(path_len)
+    #        encoded_x_train.append(path_len/norm_factor)
 
         elif column in ['next_lemma', 'previous_lemma']:
             pass
