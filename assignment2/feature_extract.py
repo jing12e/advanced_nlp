@@ -95,10 +95,10 @@ def extract_features_OLD(text):
 
     return pd.DataFrame(features_list)
 
-def extract_features(text):
+def extract_features(text, max_len):
     doc = nlp(text)
     features_list = []
-
+    pred_mask = [0] * max_len
     for token in doc:
         feature = {}
 
@@ -117,16 +117,17 @@ def extract_features(text):
         feature['head'] = token.head.text
         
         # Children 
-        children = []
+        mask  = [0] * max_len
         for child in token.children:
-            children.append(child.text)
-        feature['children'] = children
+            mask[child.i] = 1
+        feature['children'] = mask
         
         # Predicate subtree
         if token.pos_ == 'VERB':
-            feature['pred_subtree'] = list([tok.text for tok in token.subtree])
-        else:
-            feature['pred_subtree'] = None 
+            for subtree_token in token.subtree:
+                pred_mask[subtree_token.i] = 1
+        feature['pred_subtree'] = pred_mask
+        
         
         # shape
         feature['shape'] = token.shape_
@@ -174,9 +175,10 @@ def extract_features(text):
 #glove = load_glove('glove.6B.300d.txt')
 
 text = "Al-Zaman : American forces killed Shaikh Abdullah al-Ani, the preacher at the mosque in the town of 0aim, near the Syrian border. "
-features_df = extract_features(text)
+if __name__ == 'main':
+    features_df = extract_features(text)
 #[print(features_df[col]) for col in features_df.columns]
 #[print(features_df[col].astype) for col in features_df.columns]
 
-print(features_df)
-print(features_df['suffix_3'].tolist())
+    print(features_df)
+    print(features_df['suffix_3'].tolist())

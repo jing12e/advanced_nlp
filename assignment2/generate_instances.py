@@ -84,6 +84,13 @@ def generate_instances_OLD(sentences):
     return instances
 def generate_instances(sentences):
     instances = []
+    max_len = 0
+    for sentence in sentences:
+        if len(sentence['tokens']) > max_len:
+            max_len = len(sentence['tokens'])
+    max_len += 5 #safety margin
+    max_len = 164
+    print(f"max:{max_len}")
     for sentence in sentences:
         tokens = sentence["tokens"]
         predicates = sentence["predicate_positions"]
@@ -97,7 +104,7 @@ def generate_instances(sentences):
             n = n + 1
 
             text = " ".join(tokens)
-            features_df = feature_extract.extract_features(text)
+            features_df = feature_extract.extract_features(text, max_len)
 
 
             word_instances = split_instance_into_words({
