@@ -142,7 +142,11 @@ data_file = f'../data/{args.dataset}'
 sentences = extract_data_from_conll_extended(data_file)
 instances = generate_instances(sentences)
 
-
+#print(instances)
+#for instance in instances[:5]:
+ #   print(type(instance))
+  #  for key, val in instance.items():
+   #     print(f'{key}:{val}:{type(val)}')
 # Save instances
 output_file = f'{args.output_file}.json'
 with open(output_file, 'w', encoding='utf-8') as f:
@@ -155,7 +159,8 @@ with open(output_file, 'r', encoding='utf-8') as f:
 
 
 df = pd.DataFrame(data)
-print(df)
+
+
 output_file_csv = f'{args.output_file}.csv'
 df.to_csv(output_file_csv, index=False)
 print("Instances saved to", output_file_csv)

@@ -114,17 +114,17 @@ def extract_features(text):
         feature['basic_dep'] = token.dep_
         
         # Head 
-        feature['head'] = token.head
+        feature['head'] = token.head.text
         
         # Children 
         children = []
         for child in token.children:
-            children.append(child)
+            children.append(child.text)
         feature['children'] = children
         
         # Predicate subtree
         if token.pos_ == 'VERB':
-            feature['pred_subtree'] = list(token.subtree)
+            feature['pred_subtree'] = list([tok.text for tok in token.subtree])
         else:
             feature['pred_subtree'] = None 
         
@@ -175,5 +175,8 @@ def extract_features(text):
 
 text = "Al-Zaman : American forces killed Shaikh Abdullah al-Ani, the preacher at the mosque in the town of 0aim, near the Syrian border. "
 features_df = extract_features(text)
+#[print(features_df[col]) for col in features_df.columns]
+#[print(features_df[col].astype) for col in features_df.columns]
+
 print(features_df)
 print(features_df['suffix_3'].tolist())
