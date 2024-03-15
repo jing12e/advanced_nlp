@@ -100,6 +100,22 @@ def evaluate(predictions, true_y):
     print(report)
     print(conf_matrix)
 
+def final_process(df_x):
+    encoded_x = []
+    if not args.load:
+        for column in df_x.columns[1:]:
+            if column not in skiplist:
+                encoded_x.append(encode(encoder_dict[column], df_x[column].values))
+                #print('col:::\n',column,encode(encoder_dict[column], df_x[column].values))
+     #       if column == 'path_len':
+      #          path_len = np.array(x_train['path_len']).reshape(-1, 1)
+       #         norm_factor = max(path_len)
+        #        encoded_x_train.append(path_len/norm_factor)
+
+            elif column in ['next_lemma', 'previous_lemma']:
+                pass
+    return np.concatenate(encoded_x, axis=1).astype(float)
+
 # Example usage:
 
 args = process_args()
@@ -110,24 +126,13 @@ x_train['predicate'] = pd.Series([1 if isinstance(pred, str) else 0 for pred in 
 if not args.load:
     t = x_train.at[0,'predicate']
     x_train,y_train = x_train, y_train
+y_train = y_train['argument']
+
 encoder_dict = {feature: fit_encoder(x_train[feature].values) for feature in x_train.columns[1:] if feature not in skiplist}
-encoded_x_train = []
+
 dict_vec = DictVectorizer()
 #norm_factor = x_train['path_len'].max()
-if not args.load:
-    for column in x_train.columns[1:]:
-        if column not in skiplist:
-            encoded_x_train.append(encode(encoder_dict[column], x_train[column].values))
- #       if column == 'path_len':
-  #          path_len = np.array(x_train['path_len']).reshape(-1, 1)
-   #         norm_factor = max(path_len)
-    #        encoded_x_train.append(path_len/norm_factor)
 
-        elif column in ['next_lemma', 'previous_lemma']:
-            pass
-
-    x_train = np.concatenate(encoded_x_train, axis=1).astype(float)
-y_train = y_train['argument']
 if not args.load:
     print(f'### Populating Generator folder ###\n')
     for i in tqdm(range(100)):
@@ -141,12 +146,16 @@ if not args.eval_only:
     print(f'### Training LogReg Model ###\n')
     classes = np.unique(y_train)
     for i in tqdm(range(100)):
-        x_train = np.array(unpicklify(f'generator_folder/x_train_{i}.pickle'))
-        y_train_chunk = y_train[int(len(y_train)/100)*(i-1):int(len(y_train)/100)*i]
+        x_train = unpicklify(f'generator_folder/x_train_{i}.pickle')
+        if len(x_train)>0:
+            #print(x_train)
+       
+            x_train = np.array(final_process(x_train)) 
+            y_train_chunk = y_train[int(len(y_train)/100)*(i-1):int(len(y_train)/100)*i]
     
-        if len(x_train) > 5:
-            model = fit_classifier(x_train,y_train_chunk,model, classes)
-            picklify('logreg.pickle',model)
+            if len(x_train) > 5:
+                model = fit_classifier(x_train,y_train_chunk,model, classes)
+                picklify('logreg.pickle',model)
 else:
     model = load_model('logreg.pickle')
 
