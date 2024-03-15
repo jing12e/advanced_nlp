@@ -1,3 +1,4 @@
+from ast import Try
 import pandas as pd
 import numpy as np
 import argparse
@@ -35,11 +36,16 @@ def transform_csv(input_file, output_file):
         """
         Maps a GloVe embedding to an input word
         """
-        if word.lower() in glove:    
-            return glove[word.lower()]
-        else: #Out-of-vocab all zeros
+        try:
+            if word.lower() in glove:    
+                return glove[word.lower()]
+            else: #Out-of-vocab all zeros
+                return np.zeros_like(np.array(glove['the']))
+        except:
             return np.zeros_like(np.array(glove['the']))
-    data['word'] = data['word'].apply(map_embedding)
+    print(data.at[0,'word'],type(data.at[0,'word']))
+    embedded = data['word'].apply(map_embedding)
+    data['word'] = embedded
     x = data.drop('argument', axis='columns').to_csv(f'{output_file}_x.csv')
     y = data['argument'].to_csv(f'{output_file}_y.csv')
     #x = np.array(data.drop(['argument'],axis='columns').astype(float))
