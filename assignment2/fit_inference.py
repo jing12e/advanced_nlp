@@ -163,6 +163,7 @@ else:
 x_test, y_test = pd.read_csv(args.x_test), pd.read_csv(args.y_test)
 
 predictions = []
+y_true = []
 for i in range(100):
     encoded_x_test = []
     xt_chunk = x_test[int(len(x_test)/100)*(i-1):int(len(x_test)/100)*i]
@@ -181,8 +182,10 @@ for i in range(100):
 
 
         prediction = inference(model, x_test_encoded, args.output_file)
-        
+        y_true.extend(yt_chunk['argument'])
         predictions.extend(prediction)
+        #print('pred',prediction,'\n\nyt',yt_chunk)
+        #print('ytrueueue\n\n\n',y_true)
 
 y_test = y_test['argument']
-evaluate(predictions, y_test)
+evaluate(predictions, y_true)
